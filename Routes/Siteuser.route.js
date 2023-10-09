@@ -196,6 +196,38 @@ Siteroute.route('/profilechange').post(function(req, res) {
     
 });
 
+Siteroute.route('/originalphoto').post(function(req, res) {
+    Siteuserd.findByIdAndUpdate(
+        { _id:req.body._id}, 
+
+        {
+            imgurl2:req.body.imgurl
+
+        },
+    
+       function (error, success) {
+             if (error) {
+                res.send('error')
+             } else {
+                if(!success){
+
+                    res.send('invalid')
+                }
+                else{
+
+                    res.status(200).json({'Siteuserd':success});
+                }
+                
+             }
+         }
+    
+      
+    )
+    
+
+    
+});
+
 Siteroute.route('/updatestatus').post(function(req, res) {
     Siteuserd.findByIdAndUpdate(
         { _id:req.body._id}, 
@@ -654,7 +686,8 @@ Siteroute.route('/updateuserprofile').post(function(req, res) {
 Siteroute.route('/updatecpr2').get(function(req, res) {
 
     Siteuserd.updateMany(
-        {}, 
+        
+         
 
         {$set: { cpr: 5 } ,
         // Add the field if it doesn't exist
@@ -686,6 +719,37 @@ Siteroute.route('/updatecpr2').get(function(req, res) {
     
       
     )
+    
+
+    
+});
+
+Siteroute.route('/updateuserhours').post(function(req, res) {
+
+    const updateData = req.body.preparedata;
+console.log(req.body)
+    // Create an array of update operations
+    const updateOperations = updateData.map(item => ({
+      updateOne: {
+        filter: { _id: item.userid }, // Assuming your ID field is named _id
+        update: { $set: { hrs: Number(item.Hrs)+Number(item.Ot_Hrs),hrsweek:item.Date } },
+        upsert: false, // Set to true if you want to insert a new document if the ID doesn't exist
+      },
+    }));
+  
+    // Use bulkWrite to execute multiple update operations
+    Siteuserd.bulkWrite(updateOperations, { ordered: false }, function(error, result) {
+      if (error) {
+        console.error(error);
+        res.status(500).json({ error: 'An error occurred while updating documents' });
+      } else {
+        if (result.modifiedCount > 0) {
+          res.status(200).json({ message: `${result.modifiedCount} documents updated successfully` });
+        } else {
+          res.status(200).json({ message: 'No documents were updated' });
+        }
+      }
+    });
     
 
     

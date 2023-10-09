@@ -14,6 +14,15 @@ let Siteuser = new Schema({
         type: String,
         
     },
+
+    hrs: {
+        type: String,
+        
+    },
+    hrsweek: {
+        type: String,
+        
+    },
   
    
     cpr: {
@@ -35,6 +44,11 @@ imgurl: {
         type: String,
         
     },
+     
+imgurl2: {
+    type: String,
+    
+},
     email:{
 
         type: String,
