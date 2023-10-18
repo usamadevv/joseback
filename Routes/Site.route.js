@@ -52,6 +52,42 @@ Jobsiteroute.route('/updatesite').post(function(req, res) {
 
     
 });
+Jobsiteroute.route('/adduser').post(function(req, res) {
+    console.log(req.body)
+    Jobsite.findByIdAndUpdate(
+        { _id:req.body._id}, 
+
+        {
+            
+            user: req.body.user,
+        
+
+            
+           
+        },
+    
+       function (error, success) {
+             if (error) {
+                res.send('error')
+             } else {
+                if(!success){
+
+                    res.send('invalid')
+                }
+                else{
+
+                    res.status(200).json({'Jobsite':success});
+                }
+                
+             }
+         }
+    
+      
+    )
+    
+
+    
+});
 
 
 Jobsiteroute.route('/updatepayratetype').post(function(req, res) {

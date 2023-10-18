@@ -261,19 +261,21 @@ Siteroute.route('/updatestatus').post(function(req, res) {
 Siteroute.route('/add').post(function(req, res) {
 
    
-
+  
         Siteuserd.find(
             {
                 email: req.body.email,
             },
             function(error, success) {
                 if (error) {
+                    console.log(error)
                     res.status(500).json({ error: 'An error occurred' });
                 } else {
                     if (success.length === 0) {
                         let Siteuserds = new Siteuserd(req.body);
                         Siteuserds.save()
                             .then(Siteuserd => {
+                                console.log('created')
                                 res.status(200).json({'Siteuserd': 'Siteuserd added successfully'});
                             })
                             .catch(err => {
@@ -281,6 +283,7 @@ Siteroute.route('/add').post(function(req, res) {
                             });
                             
                     } else {
+                        console.log('created3')
                         res.status(200).json({ 'Siteuserd': 'user exist' });
                     }
                 }
