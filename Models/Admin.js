@@ -5,7 +5,20 @@ const Schema = mongoose.Schema;
 
 let Admin = new Schema({
    
-   
+   contacts:[{
+    userid:{
+        type:String,
+        unique:true,
+    },  unseen:{
+        type:Number,
+     
+    },  timestamp: {
+        type: Date,
+        default: Date.now, // Set to the current date and time by default
+    }
+    
+
+   }],
     email: {
         type: String,
     }
@@ -82,7 +95,11 @@ let Admin = new Schema({
 });
 
 
-
+// Middleware to update the timestamp before saving or updating the document
+Admin.pre('save', function(next) {
+    this.timestamp = new Date();
+    next();
+});
 
 
 

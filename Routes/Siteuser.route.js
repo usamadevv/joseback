@@ -257,7 +257,73 @@ Siteroute.route('/updatestatus').post(function(req, res) {
 
     
 });
+Siteroute.route('/adduser').post(function(req, res) {
+    Siteuserd.findOne({ _id: req.body.sender }, function(error, admin) {
+        if (error) {
+            console.log(error);
+            res.send('error');
+        } else if (!admin) {
+            res.send('invalid');
+        } else {
+            // Check if the contact exists in the "contacts" array
+            const existingContact = admin.contacts.find(contact => contact.userid === req.body.user);
+            if (existingContact) {
+                // Update the existing contact
+                existingContact.unseen += req.body.unseen;
+                existingContact.timestamp = Date.now();
+            } else {
+                // Push a new contact
+                admin.contacts.push({
+                    userid: req.body.user,
+                    unseen: req.body.unseen,
+                });
+            }
 
+            // Save the updated "Admin" document
+            admin.save(function(error2, success2) {
+                if (error2) {
+                    console.log(error2);
+                    res.send('error2');
+                } else {
+                    res.status(200).json({ 'Client': success2 });
+                }
+            });
+        }
+    });
+});
+Siteroute.route('/viewed').post(function(req, res) {
+    Siteuserd.findOne({ _id: req.body.sender }, function(error, admin) {
+        if (error) {
+            console.log(error);
+            res.send('error');
+        } else if (!admin) {
+            res.send('invalid');
+        } else {
+            // Check if the contact exists in the "contacts" array
+            const existingContact = admin.contacts.find(contact => contact.userid === req.body.user);
+            if (existingContact) {
+                // Update the existing contact
+                existingContact.unseen = 0;
+            } else {
+                // Push a new contact
+                admin.contacts.push({
+                    userid: req.body.user,
+                    unseen: req.body.unseen,
+                });
+            }
+
+            // Save the updated "Admin" document
+            admin.save(function(error2, success2) {
+                if (error2) {
+                    console.log(error2);
+                    res.send('error2');
+                } else {
+                    res.status(200).json({ 'Client': success2 });
+                }
+            });
+        }
+    });
+});
 Siteroute.route('/add').post(function(req, res) {
 
    

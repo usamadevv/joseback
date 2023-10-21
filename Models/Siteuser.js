@@ -5,7 +5,20 @@ const Schema = mongoose.Schema;
 
 let Siteuser = new Schema({
    
-   
+    contacts:[{
+        userid:{
+            type:String,
+            unique:true,
+        },  unseen:{
+            type:Number,
+         
+        }, 
+        timestamp: {
+            type: Date,
+            default: Date.now, // Set to the current date and time by default
+        },
+    
+       }],
     name: {
         type: String,
         

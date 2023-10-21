@@ -90,7 +90,78 @@ Supervisorroute.route('/login2').post(function(req, res) {
     
 });
 
+Supervisorroute.route('/adduser').post(function(req, res) {
+    console.log(req.body)
+    Supervisor.findOne({ _id: req.body.sender }, function(error, admin) {
+        if (error) {
+            console.log(error);
+            res.send('error');
+        } else if (!admin) {
+            res.send('invalid');
+        } else {
+            // Check if the contact exists in the "contacts" array
+            const existingContact = admin.contacts.find(contact => contact.userid === req.body.user);
+            if (existingContact) {
+                // Update the existing contact
+                existingContact.unseen += req.body.unseen;
+                existingContact.timestamp = Date.now();
+            } else {
+                console.log(admin)
+                // Push a new contact
+                admin.contacts.push({
+                    userid: req.body.user,
+                    unseen: req.body.unseen,
+                });
+            }
 
+            // Save the updated "Admin" document
+            admin.save(function(error2, success2) {
+                if (error2) {
+                    console.log(error2);
+                    res.send('error2');
+                } else {
+                    res.status(200).json({ 'Supervisor': success2 });
+                }
+            });
+        }
+    });
+});
+Supervisorroute.route('/viewed').post(function(req, res) {
+    Supervisor.findOne({ _id: req.body.sender }, function(error, admin) {
+        if (error) {
+            console.log(error);
+            res.send('error');
+        } else if (!admin) {
+            res.send('invalid');
+        } else {
+            if (!admin.contacts) {
+                admin.contacts = []; // Create the "contacts" array if it doesn't exist
+            }
+            // Check if the contact exists in the "contacts" array
+            const existingContact = admin.contacts.find(contact => contact.userid === req.body.user);
+            if (existingContact) {
+                // Update the existing contact
+                existingContact.unseen = 0;
+            } else {
+                // Push a new contact
+                admin.contacts.push({
+                    userid: req.body.user,
+                    unseen: req.body.unseen,
+                });
+            }
+
+            // Save the updated "Admin" document
+            admin.save(function(error2, success2) {
+                if (error2) {
+                    console.log(error2);
+                    res.send('error2');
+                } else {
+                    res.status(200).json({ 'Supervisor': success2 });
+                }
+            });
+        }
+    });
+});
 Supervisorroute.route('/profilechange').post(function(req, res) {
     Supervisor.findByIdAndUpdate(
         { _id:req.body._id}, 
@@ -307,15 +378,16 @@ Supervisorroute.route('/updatetime').post(function(req, res) {
 });
 
 Supervisorroute.route('/add').post(function(req, res) {
-
+console.log(req.body)
     let Supervisors = new Supervisor(req.body);
     Supervisors.save()
         .then(Supervisor => {
+            console.log('created')
             res.status(200).json({'Supervisor': 'Supervisor added successfully'});
             
         })
         .catch(err => {
-      
+      console.log(err)
             res.status(200).json({'Supervisor':'exist'});
         });
 });
